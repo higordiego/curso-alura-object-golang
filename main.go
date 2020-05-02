@@ -1,36 +1,32 @@
 package main
 
-import "log"
+import (
+	"log"
 
-// ContaCorrente - struct
-type ContaCorrente struct {
-	titular       string
-	numeroAgencia int
-	numeroConta   int
-	saldo         float64
+	"github.com/higordiego/curso-alura-object-golang/clientes"
+	"github.com/higordiego/curso-alura-object-golang/contas"
+)
+
+
+// PagarBoleto - handler
+func PagarBoleto(conta verificarConta, valorDoBoleto float64) {
+	conta.Sacar(valorDoBoleto)
+}
+
+type verificarConta interface {
+	Sacar(valor float64) string
 }
 
 
-func (c *ContaCorrente) sacar(valorDoSaque float64) string {
-	podeSacar := valorDoSaque > 0 && valorDoSaque <= c.saldo
-	if podeSacar {
-		c.saldo -= valorDoSaque
-		return "Saque realizado com sucesso."
-	}
-	return "Saldo insuficiente."
-}
+func main() {
 
-func main() {	
+	clientBruno := clientes.Titular{Nome: "Bruno", CPF:"03506838326", Profissao:"Analista"}
+	contaDoBruno := contas.ContaCorrente{Titular: clientBruno, NumeroAgencia: 123, NumeroConta: 20}
 
-	contaDaSilva :=  ContaCorrente{}
-	contaDaSilva.titular = "Silva"
-	contaDaSilva.saldo = 500
+	PagarBoleto(&contaDoBruno, 60)
 
-	
-
-	response := contaDaSilva.sacar(-200.)
-
-	log.Println(response)
-	log.Println(contaDaSilva.saldo)
-	
+	contaLuisa := contas.ContaPoupanca{}
+	contaLuisa.Depositar(500)
+	PagarBoleto(&contaLuisa, 400)
+	log.Println(contaLuisa.ObterSaldo())
 }
